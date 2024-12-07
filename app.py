@@ -47,10 +47,10 @@ def recommend_movies(df, imdb_file):
     #new_df = new_df[~new_df['Title'].isin(df['Title'])]
     #print(new_df.head())
     
-    new_df["Genre"] = new_df["Genre"].apply(lambda x: x.split(", "))
+    new_df["reGenre"] = new_df["Genre"].apply(lambda x: x.split(", "))
     
     mlb = MultiLabelBinarizer()
-    new_genre_encoded = mlb.fit_transform(new_df["Genre"])
+    new_genre_encoded = mlb.fit_transform(new_df["reGenre"])
     new_genre_names = mlb.classes_
     
     #print(new_genre_names)
