@@ -5,11 +5,12 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error
 import streamlit as st
 
-
+# function to recommend movies
 def recommend_movies(df, imdb_file, features):
+    # to seperate different genres as into different columns
     if "Genre" in features:
         df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
-    
+        # assigning binary values, 1 : genre associated with movie, 0 : genre not associated
         mlb = MultiLabelBinarizer()
         genre_encoded = mlb.fit_transform(df["Genre"])
         genre_names = mlb.classes_
@@ -17,37 +18,36 @@ def recommend_movies(df, imdb_file, features):
         genre_df = pd.DataFrame(genre_encoded, columns=genre_names)
         df = pd.concat([df, genre_df], axis=1)
 
+    # normlising duration and year of release of movies between 0 to 1
     scaler = MinMaxScaler()
     if "Duration" in features:
         df["Normalised Duration"] = scaler.fit_transform(df[["Duration"]])
     if "Year" in features:
         df["Normalised Year"] = scaler.fit_transform(df[["Year"]])
-        
+
     feature_cols = []
     if "Genre" in features_select:
-        feature_cols.extend(genre_df.columns)  # Add genre columns dynamically
+        feature_cols.extend(genre_df.columns)
     if "Year" in features_select:
         feature_cols.append("Normalised Year")
     if "Duration" in features_select:
         feature_cols.append("Normalised Duration")
 
-    #X = pd.concat([genre_df, df[["Normalised Year","Normalised Duration"]]], axis=1)
     X = df[feature_cols]
     y = df["Rating"]
-
+    # partitioning data for training and testing
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     model = RandomForestRegressor()
     model.fit(X_train, y_train)
 
-    # Predict on test data
+    # testing the model
     y_pred = model.predict(X_test)
-
-    # Calculate and print MSE
     mse = mean_squared_error(y_test, y_pred)
 
+    # reading dataset of unwatched movies
     new_df = pd.read_csv(imdb_file)
-
+    # preprocessing genre
     if "Genre" in features:
         new_df["reGenre"] = new_df["Genre"].apply(lambda x: x.split(", "))
     
@@ -57,25 +57,24 @@ def recommend_movies(df, imdb_file, features):
         new_genre_df = pd.DataFrame(new_genre_encoded, columns=new_genre_names)
         new_df = pd.concat([new_df, new_genre_df], axis=1)
     
-        for genre in genre_names:  # `genre_names` from the training phase
+        for genre in genre_names:  # 'genre_names' from the training phase
             if genre not in new_genre_df.columns:
-                new_genre_df[genre] = 0  # Add missing genre columns with 0
+                new_genre_df[genre] = 0  # add missing genre columns with 0
         new_genre_df = new_genre_df[genre_names]
-
+    # preprocessing duration and year of release
     new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
     new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
 
     new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
     new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
-
-    #unwatched_X = pd.concat([new_genre_df, new_df[['Normalised Year','Normalised Duration']]], axis=1)
+    # using the trained model to predict rating for unwatched movies
     unwatched_X = new_df[feature_cols]
     new_df['Predicted Rating'] = model.predict(unwatched_X)
 
     recommended_movies = new_df.sort_values(by="Predicted Rating", ascending=False)
     recommended_movies = recommended_movies[~recommended_movies['Title'].isin(df['Title'])]
-    #recommended_movies
     top_recommendations = recommended_movies.head()
+    # to rename column IMDB_Rating
     top_recommendations["IMDB Rating"] = top_recommendations["IMDB_Rating"]
 
     return top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB Rating']]
@@ -84,11 +83,7 @@ def recommend_movies(df, imdb_file, features):
 # Streamlit App
 st.title("Movie Recommendation System")
 st.write("Upload your watched movie dataset (Excel or CSV) to get personalized recommendations.")
-
-st.write("Select the features to base recommendations on : ")
-features_select = st.multiselect("Choose features:",
-    options=["Genre", "Duration", "Year"],
-    default=["Genre", "Duration", "Year"])
+st.write("Must contain these features : Title, Genre, Duration, Year, Rating (your personal rating of movie)")
 
 uploaded_file = st.file_uploader("Upload your watched movies dataset:", type=["xlsx", "csv"])
 if uploaded_file:
@@ -98,7 +93,13 @@ if uploaded_file:
         elif uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
 
-        imdb_file = "imdb_top_1000.csv"  # Ensure this file is available
+        st.write("Select the features to base recommendations on : ")
+        features_select = st.multiselect("Choose features:",
+            options=["Genre", "Duration", "Year"],
+            default=["Genre", "Duration", "Year"])
+
+
+        imdb_file = "imdb_top_1000.csv"
         recommendations = recommend_movies(df, imdb_file, features_select)
 
         st.write("Recommended Movies:")
