@@ -6,20 +6,22 @@ from sklearn.metrics import mean_squared_error
 import streamlit as st
 
 
-def recommend_movies(df, imdb_file):
-
-    df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
-
-    mlb = MultiLabelBinarizer()
-    genre_encoded = mlb.fit_transform(df["Genre"])
-    genre_names = mlb.classes_
-
-    genre_df = pd.DataFrame(genre_encoded, columns=genre_names)
-    df = pd.concat([df, genre_df], axis=1)
+def recommend_movies(df, imdb_file, features):
+    if "Genre" in features:
+        df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
+    
+        mlb = MultiLabelBinarizer()
+        genre_encoded = mlb.fit_transform(df["Genre"])
+        genre_names = mlb.classes_
+    
+        genre_df = pd.DataFrame(genre_encoded, columns=genre_names)
+        df = pd.concat([df, genre_df], axis=1)
 
     scaler = MinMaxScaler()
-    df["Normalised Duration"] = scaler.fit_transform(df[["Duration"]])
-    df["Normalised Year"] = scaler.fit_transform(df[["Year"]])
+    if "Duration" in features:
+        df["Normalised Duration"] = scaler.fit_transform(df[["Duration"]])
+    if "Year" in features:
+        df["Normalised Year"] = scaler.fit_transform(df[["Year"]])
 
     X = pd.concat([genre_df, df[["Normalised Year","Normalised Duration"]]], axis=1)
     y = df["Rating"]
@@ -73,6 +75,11 @@ def recommend_movies(df, imdb_file):
 st.title("Movie Recommendation System")
 st.write("Upload your watched movie dataset (Excel or CSV) to get personalized recommendations.")
 
+st.write("Select the features to base recommendations on : ")
+features_select = st.multiselect("Choose features:",
+    options=["Genre", "Duration", "Year"],
+    default=["Genre", "Duration", "Year"])
+
 uploaded_file = st.file_uploader("Upload your watched movies dataset:", type=["xlsx", "csv"])
 if uploaded_file:
     try:
@@ -82,7 +89,7 @@ if uploaded_file:
             df = pd.read_csv(uploaded_file)
 
         imdb_file = "imdb_top_1000.csv"  # Ensure this file is available
-        recommendations = recommend_movies(df, imdb_file)
+        recommendations = recommend_movies(df, imdb_file, features_select)
 
         st.write("Recommended Movies:")
         st.table(recommendations)
