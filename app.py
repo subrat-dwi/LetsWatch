@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 import streamlit as st
 
 # function to recommend movies
-def recommend_movies(df, imdb_file, features):
+def recommend_movies(df, imdb_file, features, recommend_no):
     # to seperate different genres as into different columns
     if "Genre" in features:
         df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
@@ -73,7 +73,7 @@ def recommend_movies(df, imdb_file, features):
 
     recommended_movies = new_df.sort_values(by="Predicted Rating", ascending=False)
     recommended_movies = recommended_movies[~recommended_movies['Title'].isin(df['Title'])]
-    top_recommendations = recommended_movies.head()
+    top_recommendations = recommended_movies.head(recommend_no)
     # to rename column IMDB_Rating
     top_recommendations["IMDB Rating"] = top_recommendations["IMDB_Rating"]
 
@@ -99,8 +99,12 @@ if uploaded_file:
 
 
         imdb_file = "imdb_top_1000.csv"
-        recommendations = recommend_movies(df, imdb_file, features_select)
-
+        
+        slider_value = st.slider(label="No. of recommendations : ",
+                                value=5,
+                                min_value=1,
+                                max_value=10)
+        recommendations = recommend_movies(df, imdb_file, features_select, slider_value)
         st.write("Recommended Movies:")
         st.table(recommendations)
     except Exception as e:
