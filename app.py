@@ -81,8 +81,8 @@ def recommend_movies(df, imdb_file, features):
 
 
 # Streamlit App
-st.title("Movie Recommendation System")
-st.write("Upload your watched movie dataset (Excel or CSV) to get personalized recommendations.")
+st.title("LetsWatch (Movie Recommendation System)")
+st.write("Upload your watched movie dataset to get personalized recommendations.")
 st.write("Must contain these features : Title, Genre, Duration, Year, Rating (your personal rating of movie)")
 
 uploaded_file = st.file_uploader("Upload your watched movies dataset:", type=["xlsx", "csv"])
@@ -93,8 +93,7 @@ if uploaded_file:
         elif uploaded_file.name.endswith(".csv"):
             df = pd.read_csv(uploaded_file)
 
-        st.write("Select the features to base recommendations on : ")
-        features_select = st.multiselect("Choose features:",
+        features_select = st.multiselect("Select the features to base recommendations on : ",
             options=["Genre", "Duration", "Year"],
             default=["Genre", "Duration", "Year"])
 
