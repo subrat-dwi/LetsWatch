@@ -48,21 +48,22 @@ def recommend_movies(df, imdb_file, features):
     
     new_df = pd.read_csv(imdb_file)
     
-    new_df["reGenre"] = new_df["Genre"].apply(lambda x: x.split(", "))
-    
-    mlb = MultiLabelBinarizer()
-    new_genre_encoded = mlb.fit_transform(new_df["reGenre"])
-    new_genre_names = mlb.classes_
-    
-    new_genre_df = pd.DataFrame(new_genre_encoded, columns=new_genre_names)
-    new_df = pd.concat([new_df, new_genre_df], axis=1)
-    
-    new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
-    new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
-    
+    if "Genre" in features:
+            new_df["Genre"] = new_df["Genre"].apply(lambda x: x.split(", "))
+            mlb = MultiLabelBinarizer()
+            new_genre_encoded = mlb.fit_transform(new_df["Genre"])
+            new_genre_names = mlb.classes_
+            new_genre_df = pd.DataFrame(new_genre_encoded, columns=new_genre_names)
+            new_df = pd.concat([new_df, new_genre_df], axis=1)
+
+        # Normalize Duration and Year
     scaler = MinMaxScaler()
-    new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
-    new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
+    if "Duration" in features:
+        new_df["Normalized Duration"] = scaler.fit_transform(new_df[["Duration"]])
+    if "Year" in features:
+        new_df["Normalized Year"] = scaler.fit_transform(new_df[["Year"]])
+
+    #X = df[features]
     
     for genre in genre_names:  # `genre_names` from the training phase
         if genre not in new_genre_df.columns:
