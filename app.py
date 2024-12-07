@@ -69,7 +69,8 @@ def recommend_movies(df, imdb_file, features):
             new_genre_df[genre] = 0  # Add missing genre columns with 0
     new_genre_df = new_genre_df[genre_names]
 
-    unwatched_X = pd.concat([new_genre_df, new_df[['Normalised Year','Normalised Duration']]], axis=1)
+    #unwatched_X = pd.concat([new_genre_df, new_df[['Normalised Year','Normalised Duration']]], axis=1)
+    unwatched_X = new_df[feature_cols]
     new_df['Predicted Rating'] = model.predict(unwatched_X)
 
     recommended_movies = new_df.sort_values(by="Predicted Rating", ascending=False)
