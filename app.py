@@ -84,7 +84,7 @@ st.title("Movie Recommendation System")
 st.write("Upload your watched movie dataset (Excel or CSV) to get personalized recommendations.")
 
 st.write("Select the features to base recommendations on:")
-features = st.multiselect(
+features_select = st.multiselect(
     "Choose features:",
     options=["Genre", "Duration", "Year"],
     default=["Genre", "Duration", "Year"]
@@ -98,7 +98,7 @@ if uploaded_file:
             df = pd.read_csv(uploaded_file)
 
         imdb_file = "imdb_top_1000.csv"  # Ensure this file is available
-        recommendations = recommend_movies(df, imdb_file, features)
+        recommendations = recommend_movies(df, imdb_file, features_select)
 
         st.write("Recommended Movies:")
         st.table(recommendations)
