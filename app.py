@@ -12,7 +12,8 @@ def recommend_movies(df, imdb_file, features):
             df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
             mlb = MultiLabelBinarizer()
             genre_encoded = mlb.fit_transform(df["Genre"])
-            genre_df = pd.DataFrame(genre_encoded, columns=mlb.classes_)
+            genre_names = mlb.classes_
+            genre_df = pd.DataFrame(genre_encoded, columns=genre_names)
             df = pd.concat([df, genre_df], axis=1)
 
         # Normalize Duration and Year
