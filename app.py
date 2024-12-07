@@ -16,20 +16,20 @@ def recommend_movies(df, imdb_file, features):
             df = pd.concat([df, genre_df], axis=1)
 
         # Normalize Duration and Year
-        scaler = MinMaxScaler()
-        if "Duration" in features:
-            df["Normalized Duration"] = scaler.fit_transform(df[["Duration"]])
-        if "Year" in features:
-            df["Normalized Year"] = scaler.fit_transform(df[["Year"]])
+    scaler = MinMaxScaler()
+    if "Duration" in features:
+        df["Normalized Duration"] = scaler.fit_transform(df[["Duration"]])
+    if "Year" in features:
+        df["Normalized Year"] = scaler.fit_transform(df[["Year"]])
 
         # Select Features Dynamically
-        feature_cols = []
-        if "Genre" in features:
-            feature_cols += list(genre_df.columns)
-        if "Duration" in features:
-            feature_cols.append("Normalized Duration")
-        if "Year" in features:
-            feature_cols.append("Normalized Year")
+    feature_cols = []
+    if "Genre" in features:
+        feature_cols += list(genre_df.columns)
+    if "Duration" in features:
+        feature_cols.append("Normalized Duration")
+    if "Year" in features:
+        feature_cols.append("Normalized Year")
     #X = pd.concat([genre_df, df[["Normalised Year","Normalised Duration"]]], axis=1)
     X = df[features]
     y = df["Rating"]
