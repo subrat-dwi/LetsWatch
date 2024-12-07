@@ -51,13 +51,11 @@ def recommend_movies(df, imdb_file, features):
     if "Genre" in features:
         new_df["reGenre"] = new_df["Genre"].apply(lambda x: x.split(", "))
     
-        mlb = MultiLabelBinarizer()
         new_genre_encoded = mlb.fit_transform(new_df["reGenre"])
         new_genre_names = mlb.classes_
     
         new_genre_df = pd.DataFrame(new_genre_encoded, columns=new_genre_names)
         new_df = pd.concat([new_df, new_genre_df], axis=1)
-
     
         for genre in genre_names:  # `genre_names` from the training phase
             if genre not in new_genre_df.columns:
@@ -67,7 +65,6 @@ def recommend_movies(df, imdb_file, features):
     new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
     new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
 
-    scaler = MinMaxScaler()
     new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
     new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
 
@@ -79,8 +76,9 @@ def recommend_movies(df, imdb_file, features):
     recommended_movies = recommended_movies[~recommended_movies['Title'].isin(df['Title'])]
     #recommended_movies
     top_recommendations = recommended_movies.head()
+    top_recommendations["IMDB Rating"] = top_recommendations["IMDB_Rating"]
 
-    return top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB_Rating']]
+    return top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB Rating']]
 
 
 # Streamlit App
