@@ -19,18 +19,18 @@ def recommend_movies(df, imdb_file, features):
         # Normalize Duration and Year
     scaler = MinMaxScaler()
     if "Duration" in features:
-        df["Normalized Duration"] = scaler.fit_transform(df[["Duration"]])
+        df["Normalised Duration"] = scaler.fit_transform(df[["Duration"]])
     if "Year" in features:
-        df["Normalized Year"] = scaler.fit_transform(df[["Year"]])
+        df["Normalised Year"] = scaler.fit_transform(df[["Year"]])
 
         # Select Features Dynamically
     feature_cols = []
     if "Genre" in features:
-        feature_cols.append(list(genre_df.columns))
+        feature_cols.extend(genre_df.columns)
     if "Duration" in features:
-        feature_cols.append("Normalized Duration")
+        feature_cols.append("Normalised Duration")
     if "Year" in features:
-        feature_cols.append("Normalized Year")
+        feature_cols.append("Normalised Year")
     X = pd.concat([genre_df, df[["Normalised Year","Normalised Duration"]]], axis=1)
     #X = df[features]
     y = df["Rating"]
@@ -59,9 +59,9 @@ def recommend_movies(df, imdb_file, features):
         # Normalize Duration and Year
     scaler = MinMaxScaler()
     if "Duration" in features:
-        new_df["Normalized Duration"] = scaler.fit_transform(new_df[["Duration"]])
+        new_df["Normalised Duration"] = scaler.fit_transform(new_df[["Duration"]])
     if "Year" in features:
-        new_df["Normalized Year"] = scaler.fit_transform(new_df[["Year"]])
+        new_df["Normalised Year"] = scaler.fit_transform(new_df[["Year"]])
 
     #X = df[features]
     
