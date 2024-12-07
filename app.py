@@ -26,9 +26,9 @@ def recommend_movies(df, imdb_file, features):
     if "Genre" in features_select:
         feature_cols.extend(genre_df.columns)  # Add genre columns dynamically
     if "Year" in features_select:
-        feature_cols.append("Normalized Year")
+        feature_cols.append("Normalised Year")
     if "Duration" in features_select:
-        feature_cols.append("Normalized Duration")
+        feature_cols.append("Normalised Duration")
 
     X = df[feature_cols]
 
