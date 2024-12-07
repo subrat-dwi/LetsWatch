@@ -22,6 +22,7 @@ def recommend_movies(df, imdb_file, features):
         df["Normalised Duration"] = scaler.fit_transform(df[["Duration"]])
     if "Year" in features:
         df["Normalised Year"] = scaler.fit_transform(df[["Year"]])
+        
     feature_cols = []
     if "Genre" in features_select:
         feature_cols.extend(genre_df.columns)  # Add genre columns dynamically
@@ -30,9 +31,8 @@ def recommend_movies(df, imdb_file, features):
     if "Duration" in features_select:
         feature_cols.append("Normalised Duration")
 
-    X = df[feature_cols]
-
     #X = pd.concat([genre_df, df[["Normalised Year","Normalised Duration"]]], axis=1)
+    X = df[feature_cols]
     y = df["Rating"]
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -60,11 +60,9 @@ def recommend_movies(df, imdb_file, features):
 
     
         for genre in genre_names:  # `genre_names` from the training phase
-        if genre not in new_genre_df.columns:
-            new_genre_df[genre] = 0  # Add missing genre columns with 0
+            if genre not in new_genre_df.columns:
+                new_genre_df[genre] = 0  # Add missing genre columns with 0
         new_genre_df = new_genre_df[genre_names]
-
-
 
     new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
     new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
@@ -73,7 +71,6 @@ def recommend_movies(df, imdb_file, features):
     new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
     new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
 
-    
     #unwatched_X = pd.concat([new_genre_df, new_df[['Normalised Year','Normalised Duration']]], axis=1)
     unwatched_X = new_df[feature_cols]
     new_df['Predicted Rating'] = model.predict(unwatched_X)
