@@ -7,7 +7,7 @@ import streamlit as st
 
 #df = pd.read_excel("user_movie_dataset.xlsx")
 def recommend_movies(df, imdb_file):
-    print(df.head())
+    #print(df.head())
     
     df["Genre"] = df["Genre"].apply(lambda x: x.split(", "))
     
@@ -40,7 +40,7 @@ def recommend_movies(df, imdb_file):
     
     # Calculate and print MSE
     mse = mean_squared_error(y_test, y_pred)
-    print("Mean Squared Error:", mse)
+    #print("Mean Squared Error:", mse)
     
     #required_cols = ["Title","Genre","Duration","Year","IMDB_Rating"]
     new_df = pd.read_csv(imdb_file)
@@ -59,11 +59,11 @@ def recommend_movies(df, imdb_file):
     new_df = pd.concat([new_df, new_genre_df], axis=1)
     #new_df
     
-    new_df['Duration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
+    new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
     new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
     
     scaler = MinMaxScaler()
-    new_df["Normalised Duration"] = scaler.fit_transform(new_df[["Duration"]])
+    new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
     new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
     #new_df =new_df.drop(["Year of Release"], axis=1)
     
@@ -82,7 +82,7 @@ def recommend_movies(df, imdb_file):
     recommended_movies = recommended_movies[~recommended_movies['Title'].isin(df['Title'])]
     #recommended_movies
     top_recommendations = recommended_movies.head()
-    print(top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB_Rating']])
+    #print(top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB_Rating']])
     return top_recommendations[['Title', 'Genre', 'Year', 'Duration','IMDB_Rating']]
 
 
