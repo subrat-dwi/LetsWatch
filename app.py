@@ -59,9 +59,11 @@ def recommend_movies(df, imdb_file, features):
         # Normalize Duration and Year
     scaler = MinMaxScaler()
     if "Duration" in features:
-        new_df["Normalised Duration"] = scaler.fit_transform(new_df[["Duration"]])
+        new_df['reDuration'] = new_df['Duration'].str.extract('(\d+)').astype(int)
+        new_df["Normalised Duration"] = scaler.fit_transform(new_df[["reDuration"]])
     if "Year" in features:
-        new_df["Normalised Year"] = scaler.fit_transform(new_df[["Year"]])
+        new_df['reYear'] = new_df['Year'].str.extract('(\d+)').astype(float)
+        new_df["Normalised Year"] = scaler.fit_transform(new_df[["reYear"]])
 
     #X = df[features]
     
