@@ -84,7 +84,7 @@ def recommend_movies(df, imdb_file, features, recommend_no):
 st.title("LetsWatch (Movie Recommendation System)")
 st.write("Upload your watched movie dataset to get personalized recommendations.")
 st.write("Must contain these features : Title, Genre, Duration, Year, Rating (your personal rating of movie)")
-
+st.write("Try out these [Sample Datasets](https://github.com/subrat-dwi/LetsWatch/tree/main/Sample%20Datasets) to get recommendations.")
 uploaded_file = st.file_uploader("Upload your watched movies dataset:", type=["xlsx", "csv"])
 if uploaded_file:
     try:
