@@ -1,7 +1,7 @@
 # LetsWatch: Movie Recommendation System
 ---
 
-Try it out here : **[LetsWatch](https://letswatch-wqnanzafpzzuzfppnlwsha.streamlit.app/)**
+# Try it out here : **[LetsWatch](https://letswatch-wqnanzafpzzuzfppnlwsha.streamlit.app/)**
 
 ---
 
