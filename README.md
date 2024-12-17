@@ -1,6 +1,9 @@
 # LetsWatch: Movie Recommendation System
+---
 
-Try it out here : https://letswatch-wqnanzafpzzuzfppnlwsha.streamlit.app/
+Try it out here : **[LetsWatch](https://letswatch-wqnanzafpzzuzfppnlwsha.streamlit.app/)**
+
+---
 
 ## Overview
 LetsWatch is a simple movie recommendation system that provides personalized movie recommendations based on the user's watched movie dataset. The system uses features such as genre, movie duration, and release year to predict and recommend top-rated movies from the IMDb Top 1000 movies dataset.
